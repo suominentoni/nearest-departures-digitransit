@@ -10,11 +10,11 @@ import Foundation
 import UIKit
 
 public struct Departure {
-    let line: Line
-    let scheduledDepartureTime: DepartureTime // seconds from midnight
-    let realDepartureTime: DepartureTime // seconds from midnight
+    public let line: Line
+    public let scheduledDepartureTime: DepartureTime // seconds from midnight
+    public let realDepartureTime: DepartureTime // seconds from midnight
 
-    func formattedDepartureTime() -> NSAttributedString {
+    public func formattedDepartureTime() -> NSAttributedString {
         let scheduledTime = scheduledDepartureTime.toTime()
         let realTime = realDepartureTime.toTime()
 

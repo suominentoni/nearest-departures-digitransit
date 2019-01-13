@@ -9,14 +9,14 @@
 import Foundation
 
 open class Stop: NSObject, NSCoding {
-    var name: String = ""
-    var lat: Double = 0.0
-    var lon: Double = 0.0
-    var distance: String = ""
-    var codeLong: String = ""
-    var codeShort: String = ""
-    var departures: [Departure] = []
-    var nameWithCode: String {
+    public var name: String = ""
+    public var lat: Double = 0.0
+    public var lon: Double = 0.0
+    public var distance: String = ""
+    public var codeLong: String = ""
+    public var codeShort: String = ""
+    public var departures: [Departure] = []
+    public var nameWithCode: String {
         get {
             return codeShort == "-"
                 ? "\(name)"
@@ -24,11 +24,11 @@ open class Stop: NSObject, NSCoding {
         }
     }
 
-    override init() {
+    public override init() {
         super.init()
     }
 
-    init(name: String, lat: Double, lon: Double, distance: String, codeLong: String, codeShort: String, departures: [Departure]) {
+    public init(name: String, lat: Double, lon: Double, distance: String, codeLong: String, codeShort: String, departures: [Departure]) {
         self.name = name
         self.lat = lat
         self.lon = lon
@@ -78,11 +78,11 @@ open class Stop: NSObject, NSCoding {
     }
 }
 
-func == (lhs: Stop, rhs: Stop) -> Bool {
+public func == (lhs: Stop, rhs: Stop) -> Bool {
     return lhs.codeLong == rhs.codeLong
 }
 
-func != (lhs: Stop, rhs: Stop) -> Bool {
+public  func != (lhs: Stop, rhs: Stop) -> Bool {
     return lhs.codeLong != rhs.codeLong
 }
 

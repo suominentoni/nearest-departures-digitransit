@@ -9,7 +9,7 @@
 import Foundation
 
 public struct Line {
-    let codeLong: String
-    let codeShort: String?
-    let destination: String?
+    public let codeLong: String
+    public let codeShort: String?
+    public let destination: String?
 }
