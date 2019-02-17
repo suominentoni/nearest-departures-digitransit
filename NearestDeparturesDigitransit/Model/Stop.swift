@@ -38,6 +38,50 @@ open class Stop: NSObject, NSCoding {
         self.departures = departures
     }
 
+    init?(json: [String: Any], distance: Int = 0) {
+        if let name = json["name"] as? String,
+            let lat = json["lat"] as? Double,
+            let lon = json["lon"] as? Double,
+            let gtfsId = json["gtfsId"] as? String {
+            var stopName: String = name
+            if let platformCode = json["platformCode"] as? String {
+                stopName = Stop.formatStopName(name, platformCode: platformCode)
+            }
+            if let nextDeparturesData = json["stoptimesWithoutPatterns"] as? [[String: AnyObject]] {
+                self.departures = nextDeparturesData.map({Departure(json: $0)}).unwrapAndStripNils()
+            }
+            if (departures.count == 0) {
+                return nil
+            }
+            self.name = stopName
+            self.lat = lat
+            self.lon = lon
+            self.distance = Stop.formatDistance(distance)
+            self.codeLong = gtfsId
+            self.codeShort = Stop.shortCodeForStop(stopData: json)
+        } else {
+            return nil
+        }
+    }
+
+    fileprivate static func shortCodeForStop(stopData: [String: Any]) -> String {
+        // Some public transit operators (e.g. the one in Jyväskylä)
+        // don't have a code field for their stops.
+        if let shortCode = stopData["code"] as? String {
+            return shortCode
+        } else {
+            return "-"
+        }
+    }
+
+    fileprivate static func formatDistance(_ distance: Int) -> String {
+        return distance <= 50 ? "<50" : String(distance)
+    }
+
+    fileprivate static func formatStopName(_ name: String, platformCode: String?) -> String {
+        return platformCode != nil ? "\(name), laituri \(platformCode!)" : name
+    }
+
     public required init?(coder aDecoder: NSCoder) {
         if let name = aDecoder.decodeObject(forKey: "name") as? String,
             let distance = aDecoder.decodeObject(forKey: "distance") as? String,
