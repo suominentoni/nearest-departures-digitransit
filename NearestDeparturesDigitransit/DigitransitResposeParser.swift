@@ -68,40 +68,29 @@ class DigitransitResponseParser {
     }
 
     static func parseStopsAndDeparturesFromData(obj: [String: AnyObject]) -> [Stop] {
-        var stops: [Stop?] = []
         if let data = obj["data"] as? [String: AnyObject],
             let stopsByRadius = data["stopsByRadius"] as? [String: AnyObject],
             let edges = stopsByRadius["edges"] as? NSArray {
-            for edge in edges {
-                stops.append(self.parseStopAtDistance(edge as AnyObject))
-            }
+            return edges.map({self.parseStopAtDistance($0 as AnyObject)}).unwrapAndStripNils()
         }
-        return stops.unwrapAndStripNils()
+        return []
     }
 
     static func parseNearestStopsFromData(obj: [String: AnyObject]) -> [Stop] {
-        var stops: [Stop?] = []
         if let data = obj["data"] as? [String: AnyObject],
             let stopsByRadius = data["stopsByRadius"] as? [String: AnyObject],
             let edges = stopsByRadius["edges"] as? NSArray {
-            for edge in edges {
-                stops.append(DigitransitResponseParser.parseStopAtDistance(edge as AnyObject))
-            }
+            return edges.map({self.parseStopAtDistance($0 as AnyObject)}).unwrapAndStripNils()
         }
-        return stops.unwrapAndStripNils()
+        return []
     }
 
     static func parseRectStopsFromData(obj: [String: AnyObject]) -> [Stop] {
-        var stops: [Stop?] = []
         if let data = obj["data"] as? [String: AnyObject],
             let stopsByBox = data["stopsByBbox"] as? NSArray {
-            for stop in stopsByBox {
-                if let stopJson = stop as? [String: Any] {
-                        stops.append(Stop(json: stopJson))
-                }
-            }
+            return stopsByBox.map({Stop(json: $0 as? [String: Any] ?? [String: Any]())}).unwrapAndStripNils()
         }
-        return stops.unwrapAndStripNils()
+        return []
     }
 
     fileprivate static func parseStopAtDistance(_ data: AnyObject) -> Stop? {
