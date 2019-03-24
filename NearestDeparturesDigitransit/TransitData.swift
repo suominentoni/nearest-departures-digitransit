@@ -10,7 +10,6 @@ import Foundation
 
 public enum TransitDataError: Error {
     case dataFetchingError(id: String, stop: Stop?)
-    case favouriteStopsFetchingError
     case unknownError
 }
 
