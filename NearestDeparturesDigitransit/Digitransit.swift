@@ -16,14 +16,32 @@ struct Digitransit {
         static fileprivate let departureFields = "scheduledDeparture, realtimeDeparture, departureDelay, realtime, realtimeState, serviceDay, pickupType, trip {tripHeadsign, directionId, route {shortName, longName, mode}}"
 
         static func departuresForStop(gtfsId: String) -> String {
-            return "{stop(id: \"\(gtfsId)\" ) { \(stopFields), stoptimesWithoutPatterns(numberOfDepartures: 30) {\(departureFields) }}}"
+            return """
+            {
+                stop(id: \"\(gtfsId)\") {
+                    \(stopFields),
+                    stoptimesWithoutPatterns(numberOfDepartures: 30) {
+                        \(departureFields)
+                    }
+                }
+            }
+            """
         }
 
         static func departuresForStops(stops: [Stop]) -> String {
             let idsCommaSeparated = stops.reduce("", {(result, stop) in
                 return result + "\"" + stop.codeLong + "\","
             })
-            return "{stops(ids: [\(idsCommaSeparated)] ) { \(stopFields), stoptimesWithoutPatterns(numberOfDepartures: 30) {\(departureFields) }}}"
+            return """
+            {
+                stops(ids: [\(idsCommaSeparated)]) {
+                    \(stopFields),
+                    stoptimesWithoutPatterns(numberOfDepartures: 30) {
+                        \(departureFields)
+                    }
+                }
+            }
+            """
         }
 
         static func coordinatesForStop(stop: Stop) -> String {
@@ -36,27 +54,102 @@ struct Digitransit {
             radius: Int,
             stopCount: Int,
             departureCount: Int) -> String {
-            return "{stopsByRadius(lat:\(String(lat)), lon: \(String(lon)), radius: \(radius), first: \(stopCount))" +
-                "{edges {node {distance, stop { \(stopFields)" +
-                ",stoptimesWithoutPatterns(numberOfDepartures: \(departureCount)) {" +
-                departureFields + "}}}}}}"
+            return """
+                {
+                    stopsByRadius(
+                        lat:\(String(lat)),
+                        lon: \(String(lon)),
+                        radius: \(radius),
+                        first: \(stopCount))
+                    {
+                        edges {
+                            node {
+                                distance,
+                                stop {
+                                    \(stopFields),
+                                    stoptimesWithoutPatterns(numberOfDepartures: \(departureCount)) {
+                                        \(departureFields)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            """
         }
 
         static func nearestStops(lat: Double, lon: Double) -> String {
-            return "{stopsByRadius(lat:\(String(lat)), lon: \(String(lon)), radius: 5000, first: 30)" +
-            "{edges {node {distance, stop { \(stopFields) }}}}}"
+            return """
+                {
+                    stopsByRadius(
+                        lat:\(String(lat)),
+                        lon: \(String(lon)),
+                        radius: 5000,
+                        first: 30)
+                    {
+                        edges {
+                            node {
+                                distance,
+                                stop {
+                                    \(stopFields)
+                                }
+                            }
+                        }
+                    }
+                }
+            """
         }
 
         static func stopsForRect(minLat: Double, minLon: Double, maxLat: Double, maxLon: Double) -> String {
-            return "{stopsByBbox(minLat:\(minLat), minLon:\(minLon), maxLat:\(maxLat), maxLon:\(maxLon)) { \(stopFields), stoptimesWithoutPatterns(numberOfDepartures: 1) { \(departureFields) }}}"
+            return """
+                {
+                    stopsByBbox(
+                        minLat:\(minLat),
+                        minLon:\(minLon),
+                        maxLat:\(maxLat),
+                        maxLon:\(maxLon))
+                    {
+                        \(stopFields),
+                        stoptimesWithoutPatterns(numberOfDepartures: 1) {
+                            \(departureFields)
+                        }
+                    }
+                }
+            """
         }
 
         static func stopsByCodes(codes: [String]) -> String {
-            return "{stops(ids: \(codes)){" +
-                    "gtfsId, lat, lon, code, platformCode, desc, name," +
-                    "stoptimesWithoutPatterns(numberOfDepartures: 30) {" +
-                        "scheduledDeparture, realtimeDeparture, departureDelay, realtime, realtimeState, serviceDay, pickupType," +
-                "trip {tripHeadsign, directionId, route {shortName, longName, mode}}}}}"
+            return """
+                {
+                    stops(ids: \(codes)) {
+                        gtfsId,
+                        lat,
+                        lon,
+                        code,
+                        platformCode,
+                        desc,
+                        name,
+                        stoptimesWithoutPatterns(numberOfDepartures: 30) {
+                            scheduledDeparture,
+                            realtimeDeparture,
+                            departureDelay,
+                            realtime,
+                            realtimeState,
+                            serviceDay,
+                            pickupType,
+                            trip {
+                                tripHeadsign,
+                                directionId,
+                                route {
+                                    shortName,
+                                    longName,
+                                    mode
+                                }
+                            }
+                        }
+                    }
+                }
+            """
         }
     }
 }
