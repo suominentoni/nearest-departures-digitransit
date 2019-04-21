@@ -13,7 +13,7 @@ struct Coordinate {
     let lon: Double
 }
 
-class DigitransitResponseParser {
+internal class DigitransitResponseParser {
     static func parseStopsFromData(obj: [String: AnyObject]) throws -> [Stop]  {
         if let errors = obj["errors"] as? NSArray {
             if let dataFetchingException = errors.first(where: {e in

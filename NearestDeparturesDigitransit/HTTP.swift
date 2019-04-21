@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class HTTP {
+internal class HTTP {
     fileprivate func getJSONObject(
         _ url: String,
         callback: @escaping ([String: AnyObject], String?) -> Void) -> Void {

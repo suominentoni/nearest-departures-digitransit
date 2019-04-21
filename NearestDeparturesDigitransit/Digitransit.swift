@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Digitransit {
+internal struct Digitransit {
     static let apiUrl = "https://api.digitransit.fi/routing/v1/routers/finland/index/graphql"
 
     struct Query {
