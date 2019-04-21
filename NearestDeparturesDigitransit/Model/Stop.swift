@@ -50,9 +50,6 @@ open class Stop: NSObject, NSCoding {
             if let nextDeparturesData = json["stoptimesWithoutPatterns"] as? [[String: AnyObject]] {
                 self.departures = nextDeparturesData.map({Departure(json: $0)}).unwrapAndStripNils()
             }
-            if (departures.count == 0) {
-                return nil
-            }
             self.name = stopName
             self.lat = lat
             self.lon = lon
