@@ -23,6 +23,38 @@ public class _TransitData {
         _TransitData.httpClient = httpClient
     }
 
+    public static let DEFAULT_RADIUS = 5000
+    public static let DEFAULT_STOP_COUNT = 30
+    public static let DEFAULT_DEPARTURE_COUNT = 30
+
+    public func nearestStopsAndDepartures(
+        _ lat: Double,
+        lon: Double,
+        radius: Int = DEFAULT_RADIUS,
+        stopCount: Int = DEFAULT_STOP_COUNT,
+        departureCount: Int = DEFAULT_DEPARTURE_COUNT,
+        callback: @escaping (_ stops: [Stop]) -> Void) -> Void {
+        _TransitData.httpClient.post(
+            Digitransit.apiUrl,
+            body: Digitransit.Query.nearestStopsAndDepartures(lat: lat, lon: lon, radius: radius, stopCount: stopCount, departureCount: departureCount),
+            callback: {(obj: [String: AnyObject], httpError: String?) in
+                callback(DigitransitResponseParser.parseStopsAndDeparturesFromData(obj: obj))
+            }
+        )
+    }
+
+    public func nearestStops(_ lat: Double, lon: Double, callback: @escaping (_ stops: [Stop]) -> Void) -> Void {
+        _TransitData.httpClient.post(Digitransit.apiUrl, body: Digitransit.Query.nearestStops(lat: lat, lon: lon), callback: {(obj: [String: AnyObject], httpError: String?) in
+            callback(DigitransitResponseParser.parseNearestStopsFromData(obj: obj))
+        })
+    }
+
+    public func stopsForRect(minLat: Double, minLon: Double, maxLat: Double, maxLon: Double, callback: @escaping (_ stops: [Stop]) -> Void) -> Void {
+        _TransitData.httpClient.post(Digitransit.apiUrl, body: Digitransit.Query.stopsForRect(minLat: minLat, minLon: minLon, maxLat: maxLat, maxLon: maxLon), callback: {(obj: [String: AnyObject], httpError: String?) in
+            callback(DigitransitResponseParser.parseRectStopsFromData(obj: obj))
+        })
+    }
+
     public func updateDeparturesForStops(_ stops: [Stop], callback: @escaping (_ stopsWithDepartures: [Stop], _ error: TransitDataError?) -> Void) -> Void {
         _TransitData.httpClient.post(Digitransit.apiUrl, body: Digitransit.Query.departuresForStops(stops: stops), callback: {(obj: [String: AnyObject], httpError: String?) -> Void in
             do {
@@ -51,39 +83,7 @@ public class _TransitData {
         })
     }
 
-    public static let DEFAULT_RADIUS = 5000
-    public static let DEFAULT_STOP_COUNT = 30
-    public static let DEFAULT_DEPARTURE_COUNT = 30
-
-    public func nearestStopsAndDepartures(
-        _ lat: Double,
-        lon: Double,
-        radius: Int = DEFAULT_RADIUS,
-        stopCount: Int = DEFAULT_STOP_COUNT,
-        departureCount: Int = DEFAULT_DEPARTURE_COUNT,
-        callback: @escaping (_ stops: [Stop]) -> Void) {
-        _TransitData.httpClient.post(
-            Digitransit.apiUrl,
-            body: Digitransit.Query.nearestStopsAndDepartures(lat: lat, lon: lon, radius: radius, stopCount: stopCount, departureCount: departureCount),
-            callback: {(obj: [String: AnyObject], httpError: String?) in
-                callback(DigitransitResponseParser.parseStopsAndDeparturesFromData(obj: obj))
-            }
-        )
-    }
-
-    public func nearestStops(_ lat: Double, lon: Double, callback: @escaping (_ stops: [Stop]) -> Void) {
-        _TransitData.httpClient.post(Digitransit.apiUrl, body: Digitransit.Query.nearestStops(lat: lat, lon: lon), callback: {(obj: [String: AnyObject], httpError: String?) in
-            callback(DigitransitResponseParser.parseNearestStopsFromData(obj: obj))
-        })
-    }
-
-    public func stopsForRect(minLat: Double, minLon: Double, maxLat: Double, maxLon: Double, callback: @escaping (_ stops: [Stop]) -> Void) {
-        _TransitData.httpClient.post(Digitransit.apiUrl, body: Digitransit.Query.stopsForRect(minLat: minLat, minLon: minLon, maxLat: maxLat, maxLon: maxLon), callback: {(obj: [String: AnyObject], httpError: String?) in
-            callback(DigitransitResponseParser.parseRectStopsFromData(obj: obj))
-        })
-    }
-
-    public func stopsByCodes(codes: [String], callback: @escaping (_ stops: [Stop], _ error: TransitDataError?) -> Void) {
+    public func stopsByCodes(codes: [String], callback: @escaping (_ stops: [Stop], _ error: TransitDataError?) -> Void) -> Void {
         let q = Digitransit.Query.stopsByCodes(codes: codes)
         print("FAV: query \(q)")
         _TransitData.httpClient.post(
