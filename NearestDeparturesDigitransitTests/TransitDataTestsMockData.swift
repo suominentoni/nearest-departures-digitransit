@@ -101,4 +101,19 @@ class TransitDataTestsMockData: XCTestCase {
         ex.fulfill()
         self.wait(for: [ex], timeout: 2.0)
     }
+
+    func test_stop_encode_decode() {
+        let stop = Stop(name: "Test stop", lat: 62.890498, lon: 27.672156, distance: "100 m", codeLong: "1234567", codeShort: "123", departures: [])
+        let stops = [stop]
+        let data = NSKeyedArchiver.archivedData(withRootObject: stops)
+        if let stops = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? [Stop] {
+            XCTAssert(stop == stops[0])
+            XCTAssertEqual(stop.lat, stops[0].lat)
+            XCTAssertEqual(stop.lon, stops[0].lon)
+            XCTAssertEqual(stop.name, stops[0].name)
+            XCTAssertEqual(stop.distance, stops[0].distance)
+            XCTAssertEqual(stop.codeLong, stops[0].codeLong)
+            XCTAssertEqual(stop.codeShort, stops[0].codeShort)
+        }
+    }
 }
