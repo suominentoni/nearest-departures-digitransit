@@ -25,7 +25,7 @@ class NearestDeparturesDigitransitTests: XCTestCase {
     func test_stop_count() {
         let ex = self.expectation(description: "Returns correct amount of stops")
         TransitData.nearestStopsAndDepartures(lat, lon: lon, callback: {stops in
-            XCTAssert(stops.count == 24 || stops.count == 29) // Note: API randomly returns 24 or 29 stops
+            XCTAssert(stops.count > 20 && stops.count < 35) // Note: API randomly returns a different amount of stops
             ex.fulfill()
         })
         self.wait(for: [ex], timeout: timeout)
@@ -44,7 +44,7 @@ class NearestDeparturesDigitransitTests: XCTestCase {
         let ex = self.expectation(description: "Returns stop distance")
         TransitData.nearestStopsAndDepartures(lat, lon: lon, callback: {stops in
             XCTAssertEqual(stops[0].distance, "<50")
-            XCTAssertEqual(stops[1].distance, "60")
+            XCTAssert(stops[1].distance == "59" || stops[1].distance == "60")
             ex.fulfill()
         })
         self.wait(for: [ex], timeout: timeout)
