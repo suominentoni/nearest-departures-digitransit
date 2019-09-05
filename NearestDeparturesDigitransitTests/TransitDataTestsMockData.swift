@@ -2,7 +2,7 @@ import XCTest
 @testable import NearestDeparturesDigitransit
 
 fileprivate class MockHttp: HTTP {
-    override func HTTPsendRequest(_ request: NSMutableURLRequest,
+    override func HTTPsendRequest(_ request: URLRequest,
                          callback: @escaping (String, String?) -> Void) -> Void {
         callback(testData, nil)
     }
